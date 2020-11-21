@@ -11,6 +11,10 @@ jobs:
         compiler: [gcc, clang] 
 
     steps:
+      - name: Brewing
+        run: |
+          brew update
+          brew install tbb
       - name: Set my secrets
         uses: webfactory/ssh-agent@v0.4.1
         with:
