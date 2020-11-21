@@ -1,0 +1,36 @@
+name: Mac Build test
+
+on: [push]
+
+jobs:
+  test-github-cpuonly:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest]
+        compiler: [gcc, clang] 
+
+    steps:
+      - name: Set my secrets
+        uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Checkout DSPThirdPartyLibs
+        uses: actions/checkout@v2
+        with:
+          repository: kibaekkim/DSPThirdPartyLibs
+          path: DSPThirdPartyLibs
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          lfs: true
+      - name: Test SCIP
+        env:
+          MYOS: ${{ matrix.os }}
+          CC: ${{ matrix.compiler }}
+          FC: gfortran-9
+        run: |
+          cd DSPThirdPartyLibs
+          ./github.sh
+          ./bin/scip -v
+          ls lib
+          export DYLD_LIBRARY_PATH=$PWD/lib:$(dirname `$FC --print-file-name libgfortran.dylib`):$DYLD_LIBRARY_PATH
+          echo $DYLD_LIBRARY_PATH
