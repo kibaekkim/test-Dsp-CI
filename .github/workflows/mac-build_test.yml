@@ -30,7 +30,8 @@ jobs:
         run: |
           cd DSPThirdPartyLibs
           ./github.sh
-          ./bin/scip -v
+          ls bin
           ls lib
+          ./bin/scip -v
           export DYLD_LIBRARY_PATH=$PWD/lib:$(dirname `$FC --print-file-name libgfortran.dylib`):$DYLD_LIBRARY_PATH
           echo $DYLD_LIBRARY_PATH
