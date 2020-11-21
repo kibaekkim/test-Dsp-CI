@@ -24,12 +24,10 @@ jobs:
           lfs: true
       - name: Test SCIP
         env:
-          MYOS: ${{ matrix.os }}
-          CC: ${{ matrix.compiler }}
           FC: gfortran-9
         run: |
           cd DSPThirdPartyLibs
-          ./github.sh
+          sh SCIPOptSuite-7.0.1-Darwin-no-Ipopt.sh --skip-license
           ls bin
           ls lib
           ./bin/scip -v
