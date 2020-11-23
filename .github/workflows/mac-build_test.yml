@@ -39,7 +39,8 @@ jobs:
           ./bin/scip -v
       - name: Check SCIP
         run: |
-          echo "TEST: $DYLD_LIBRARY_PATH"
+          echo "TEST: ${{ env.DYLD_LIBRARY_PATH }}"
+          export DYLD_LIBRARY_PATH=${{ env.DYLD_LIBRARY_PATH }}
           cd DSPThirdPartyLibs
           ls bin
           ls lib
