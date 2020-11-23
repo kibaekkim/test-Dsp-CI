@@ -33,7 +33,12 @@ jobs:
           cd DSPThirdPartyLibs
           sh SCIPOptSuite-7.0.1-Darwin-no-Ipopt.sh --skip-license
           export DYLD_LIBRARY_PATH=$PWD/lib:$(dirname `$FC --print-file-name libgfortran.dylib`):$DYLD_LIBRARY_PATH
+          echo "DYLD_LIBRARY_PATH=$PWD/lib" >> $GITHUB_ENV
+          echo "DYLD_LIBRARY_PATH=$(dirname `$FC --print-file-name libgfortran.dylib`)" >> $GITHUB_ENV
+      - name: Check SCIP
+        run: |
+          echo $DYLD_LIBRARY_PATH
+          cd DSPThirdPartyLibs
           ls bin
           ls lib
           ./bin/scip -v
-          echo $DYLD_LIBRARY_PATH
