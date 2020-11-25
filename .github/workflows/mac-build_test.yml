@@ -20,12 +20,8 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Checkout DSPThirdPartyLibs
-        uses: actions/checkout@v2
-        with:
-          repository: kibaekkim/DSPThirdPartyLibs
-          path: DSPThirdPartyLibs
-          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          lfs: true
+        run: |
+          git clone git@xgitlab.cels.anl.gov:kimk/DSPThirdPartyLibs.git
       - name: Test SCIP
         env:
           FC: gfortran-9
