@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest]
-        compiler: [gcc, clang] 
+        compiler: [clang] 
 
     steps:
       - name: Brewing
@@ -21,6 +21,10 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Checkout DSPThirdPartyLibs
         run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan xgitlab.cels.anl.gov >> ~/.ssh/known_hosts
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
           git clone git@xgitlab.cels.anl.gov:kimk/DSPThirdPartyLibs.git
       - name: Test SCIP
         env:
