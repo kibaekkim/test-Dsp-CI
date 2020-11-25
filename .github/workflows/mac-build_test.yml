@@ -23,8 +23,6 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan xgitlab.cels.anl.gov >> ~/.ssh/known_hosts
-          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
-          ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
           git clone git@xgitlab.cels.anl.gov:kimk/DSPThirdPartyLibs.git
       - name: Test SCIP
         env:
