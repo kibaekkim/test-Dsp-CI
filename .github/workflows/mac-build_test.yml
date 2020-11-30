@@ -7,14 +7,17 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest]
-        compiler: [clang] 
+        os: [macos-latest, ubuntu-18.04]
+        compiler: [gcc, clang] 
 
     steps:
       - name: Brewing
         run: |
-          brew update
-          brew install tbb
+          if [ ${{ matrix.os }} == macos-latest ]
+          then
+            brew update
+            brew install tbb
+          fi
       - name: Set my secrets
         uses: webfactory/ssh-agent@v0.4.1
         with:
@@ -29,16 +32,28 @@ jobs:
           FC: gfortran-9
         run: |
           cd DSPThirdPartyLibs
-          sh SCIPOptSuite-7.0.1-Darwin-no-Ipopt.sh --skip-license
-          export DYLD_LIBRARY_PATH=$PWD/lib:$(dirname `$FC --print-file-name libgfortran.dylib`):$DYLD_LIBRARY_PATH
-          echo "DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH" >> $GITHUB_ENV
-          ls bin
-          ls lib
-          ./bin/scip -v
+          ./github.sh
+          if [ ${{ matrix.os }} == ubuntu-18.04 ]
+          then
+            export LD_LIBRARY_PATH=$PWD/lib:$(dirname `$FC --print-file-name libgfortran.so`):$LD_LIBRARY_PATH
+            echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> $GITHUB_ENV
+          fi
+          if [ ${{ matrix.os }} == macos-latest ]
+          then
+            export DYLD_LIBRARY_PATH=$PWD/lib:$(dirname `$FC --print-file-name libgfortran.dylib`):$DYLD_LIBRARY_PATH
+            echo "DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH" >> $GITHUB_ENV
+          fi
       - name: Check SCIP
         run: |
           echo "TEST: ${{ env.DYLD_LIBRARY_PATH }}"
-          export DYLD_LIBRARY_PATH=${{ env.DYLD_LIBRARY_PATH }}
+          if [ ${{ matrix.os }} == ubuntu-18.04 ]
+          then
+            export LD_LIBRARY_PATH=${{ env.LD_LIBRARY_PATH }}
+          fi
+          if [ ${{ matrix.os }} == macos-latest ]
+          then
+            export DYLD_LIBRARY_PATH=${{ env.DYLD_LIBRARY_PATH }}
+          fi
           cd DSPThirdPartyLibs
           ls bin
           ls lib
