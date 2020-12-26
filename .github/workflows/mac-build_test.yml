@@ -11,28 +11,18 @@ jobs:
         compiler: [gcc, clang] 
 
     steps:
-      - name: Set my secrets
-        uses: webfactory/ssh-agent@v0.4.1
+      - name: SCP test
+        uses: appleboy/scp-action@master
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: Checkout DSPThirdPartyLibs
+          host: "homes.cels.anl.gov"
+          username: "kimk"
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          proxy_host: "logins.cels.anl.gov"
+          proxy_username: "kimk"
+          proxy_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "ddo/hello.txt"
+          target: "hello.txt"
+      - name: Check local file
         run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan xgitlab.cels.anl.gov >> ~/.ssh/known_hosts
-          git clone git@xgitlab.cels.anl.gov:kimk/DSPThirdPartyLibs.git
-      - name: Test SCIP
-        env:
-          FC: gfortran-9
-        run: |
-          cd DSPThirdPartyLibs
-          ./build_scip.sh
-          export DYLD_LIBRARY_PATH=$PWD/lib:$(dirname `$FC --print-file-name libgfortran.dylib`):$DYLD_LIBRARY_PATH
-          echo "DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH" >> $GITHUB_ENV
-      - name: Check SCIP
-        run: |
-          echo "TEST: ${{ env.DYLD_LIBRARY_PATH }}"
-          export DYLD_LIBRARY_PATH=${{ env.DYLD_LIBRARY_PATH }}
-          cd DSPThirdPartyLibs
-          ls bin
-          ls lib
-          ./bin/scip -v
+          ls -al
+          cat hello.txt
