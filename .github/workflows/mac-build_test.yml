@@ -7,8 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest]
-        compiler: [gcc, clang] 
+        os: [ubuntu-latest]
 
     steps:
       - name: SCP test
